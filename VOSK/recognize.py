@@ -8,14 +8,10 @@ def speech_to_text(audio_queue: mp.Queue, # 録音するプロセスから音声
                    result_dict: dict, 
                    sample_rate: int) -> None: # サンプリング周波数
     NO_LOG: int = -1 # VOSK関連のログを出さないためのフラグ
-    MODEL_PATH = "model" # モデルのあるディレクトリまでのパス
     
     vosk.SetLogLevel(NO_LOG)
     
-    # 以下のようにするとモデル名を指定すると、モデルが/Users/User/.cache/vosk/（パスはWindowsの場合）になければ自動でダウンロードしてくれ、
-    # さらに次回以降別のディレクトリでプログラムを実行してもモデルを移動せずにプログラムを実行することができます。
     model: vosk.Model = vosk.Model(model_name="vosk-model-ja-0.22")
-    #model: vosk.Model = vosk.Model(model_path=MODEL_PATH)
     recognizer = vosk.KaldiRecognizer(model, sample_rate)
     
     print("Recognizer is ready")
