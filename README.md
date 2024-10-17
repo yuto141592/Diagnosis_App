@@ -1,8 +1,8 @@
 # diagnosisApp
 MyApp部分のコードはメンバーが書いてくれた
 
-MyApp.pyと同階層に.envファイルを作成\n
-.env内にopenAIのAPIキーを記述\n
-VOICEVOXを立ち上げる\n
+MyApp.pyと同階層に.envファイルを作成<br>
+.env内にopenAIのAPIキーを記述<br>
+VOICEVOXを立ち上げる<br>
 MyApp.pyを実行
 
