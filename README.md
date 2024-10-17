@@ -1,0 +1,2 @@
+# diagnosisApp
+MyApp部分のコードはメンバーが書いてくれた
