@@ -1,7 +1,15 @@
 import openai
+from dotenv import load_dotenv
+import os
+
+# .env ファイルを読み込む
+load_dotenv()
+
+# 環境変数から API キーを取得
+key = os.getenv("API_KEY")
 
 # APIキーの設定
-openai.api_key = ""
+openai.api_key = key
 def openAI(symptoms):
 
     # GPTによる応答生成
