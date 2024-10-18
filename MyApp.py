@@ -1,9 +1,11 @@
+import os
 import sys
 import time
 from colorama import init, Fore
 from OpenAI import openAI
 from VOSK.VOICEVOX.voicevox import text_to_speech
 from VOSK.vosk import exeVosk
+from fpdf import FPDF, XPos, YPos
 
 # coloramaの初期化（自動リセットを有効にする）
 init(autoreset=True)
@@ -84,6 +86,66 @@ def create_txt(symptoms_summary, diagnosis_suggestions):
     
     return txt_output_path
 
+# PDFの作成に画像を追加する関数
+def create_pdf(symptoms_summary, diagnosis_suggestions, image_path):
+    pdf = FPDF()
+    pdf.add_page()
+
+    # 日本語フォントを追加
+    font_path = os.path.join(os.path.dirname(__file__), 'NotoSansJP-Regular.ttf')  # フォントファイルのパス
+    if not os.path.exists(font_path):
+        print(f"フォントファイルが見つかりません: {font_path}")
+        return "フォントファイルが見つかりません。"
+
+    pdf.add_font('NotoSansJP', '', font_path, uni=True)  # 日本語フォントの追加
+    pdf.set_font('NotoSansJP', size=12)
+
+    # タイトル
+    pdf.cell(200, 10, text="診断結果", new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='C')
+
+    # 症状のまとめ
+    pdf.cell(200, 10, text="症状のまとめ:", new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='L')
+    pdf.multi_cell(0, 10, symptoms_summary)
+
+    # 予測される病気
+    pdf.cell(200, 10, text="予測される病気:", new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='L')
+    pdf.multi_cell(0, 10, diagnosis_suggestions)
+
+    # これまでの受診歴
+    pdf.cell(200, 10, text="これまでの受診歴:", new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='L')
+    pdf.cell(0, 10, text=f"2021年 〇〇医院 胃カメラ検査", new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='L')
+    pdf.cell(0, 10, text=f"2021年 △△クリニック 胃カメラ検査", new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='L')
+    pdf.cell(0, 10, text=f"2021年 □□大学病院 心エコー検査", new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='L')
+
+    # 1行分の空白を追加
+    pdf.cell(0, 10, text="", new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='L')
+    
+    # 生体情報
+    pdf.cell(200, 10, text="生体情報:", new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='L')
+    pdf.cell(0, 10, text=f"心拍数: 75 回/分", new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='L')
+    pdf.cell(0, 10, text=f"今日の歩数: 500 歩", new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='L')
+    
+    # 1行分の空白を追加
+    pdf.cell(0, 10, text="", new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='L')
+    
+
+    # 画像を追加
+    if image_path:
+        try:
+            if os.path.exists(image_path):
+                pdf.cell(200, 10, text="診断に関する画像:", new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='L')
+                pdf.image(image_path, x=10, y=None, w=100)  # 画像を挿入
+            else:
+                print(f"指定された画像ファイルが存在しません: {image_path}")
+        except Exception as e:
+            print(f"画像の追加中にエラーが発生しました: {e}")
+
+    # PDFをファイルとして保存
+    pdf_output_path = "diagnosis_result_with_image.pdf"
+    pdf.output(pdf_output_path)
+
+    return pdf_output_path
+
 # メイン処理
 def main():
     # 患者の症状を入力
@@ -111,6 +173,10 @@ def main():
     print(f"テキストファイルが生成されました: {txt_path}")
     print(diagnosis_suggestions)
     text_to_speech(diagnosis_suggestions)
+
+    # PDFファイルの作成
+    pdf_path = create_pdf(symptoms_summary, diagnosis_suggestions, symptoms['image_path'])
+    print(f"PDFファイルが生成されました: {pdf_path}")
     
 
 

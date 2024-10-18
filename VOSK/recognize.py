@@ -28,7 +28,8 @@ def speech_to_text(audio_queue: mp.Queue, # 録音するプロセスから音声
         "咳や痰は出ますか？",
         "他に気になる症状はありますか？",
         "吐き気はありますか？",
-        "周りにコロナやインフルエンザに感染している・していた人はいますか？"
+        "周りにコロナやインフルエンザに感染している・していた人はいますか？",
+        "口の中の写真を送ってください:"
     ]
     categories = [
         'main_symptom',
@@ -39,7 +40,8 @@ def speech_to_text(audio_queue: mp.Queue, # 録音するプロセスから音声
         'cough_or_sputum',
         'other_symptoms',
         'nausea',
-        'contact_with_infection'
+        'contact_with_infection',
+        'image_path'
     ]
 
     print(questions[i])
@@ -59,11 +61,14 @@ def speech_to_text(audio_queue: mp.Queue, # 録音するプロセスから音声
             text = result["text"].replace(" ", "")
             
             if text != "":
-                print(text)
-                print(i)
-                symptoms[categories[i - 1]] = text
+                if i == 10:
+                    symptoms[categories[i - 1]] = input()
+                else:
+                    print(text)
+                    print(i)
+                    symptoms[categories[i - 1]] = text
 
-                if i <= 8:
+                if i <= 9:
                     print(questions[i])
                     text_to_speech(questions[i])
                     
